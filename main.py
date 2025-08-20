@@ -1,27 +1,33 @@
-import csv
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 def baca_tabel_per_kolom(file_path):
-    kolom = {}
-    with open(file_path, "r", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        
-        for h in reader.fieldnames:
-            kolom [h] = []
-        
-        for row in reader:
-            for h in reader.fieldnames:
-                value = row[h]
-                if value.isdigit():
-                    kolom[h].append(int(value))
-                else:
-                    kolom[h].append(value)
-                
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = [line.strip().split("\t") for line in f if line.strip()]
+
+    # Ambil header
+    header = lines[0]
+
+    # Ambil data isi table
+    data = lines[1:]
+
+    # Buat dictionary untuk menampung list per kolom
+    kolom = {h: [] for h in header}
+
+    # Isi dictionary dengan data sesuai kolom
+    for row in data:
+        for i, h in enumerate(header):
+            value = row[i]
+            # kalau bisa di-cast ke int, jadikan int
+            if value.isdigit():
+                kolom[h].append(int(value))
+            else:
+                kolom[h].append(value)
+
     return kolom
 
-# Main 
-file_txt = "./dataset.csv"
+
+file_txt = "./dataset.txt"
 hasil = baca_tabel_per_kolom(file_txt)
 
 # Akses Setiap Kolom
@@ -30,12 +36,15 @@ print("Nama: ", hasil["Nama"])
 print("Berat Badan: ", hasil["BeratBadan"])
 print("Tinggi Badan: ", hasil["TinggiBadan"])
 print("Lingkar Pinggang: ", hasil["LingkarPinggang"])
-print("Tekanan: ", hasil["TekananDarah"])
+print("Tekanan Darah: ", hasil["TekananDarah"])
 
 x = hasil["BeratBadan"]
 y = hasil["LingkarPinggang"]
 
 plt.scatter(x, y)
+plt.xlabel("Berat Badan (kg)")
+plt.ylabel("Lingkar Pinggang (cm)")
+plt.title("Scatter Plot Berat Badan vs Lingkar Pinggang")
 plt.show()
 
 data = list(zip(x, y))

@@ -65,32 +65,38 @@ plt.show()
 data = np.array(list(zip(x, y, z)))  # pastikan data array
 
 silhouette_scores = []
+inertias = []
 
-# range cluster minimal 2
+# Silhouette (minimal cluster = 2)
 for i in range(2, 10):
-    kmeans = KMeans(n_clusters=i)
+    kmeans = KMeans(n_clusters=i, n_init=10, random_state=42)
     kmeans.fit(data)
     labels = kmeans.labels_
     score = silhouette_score(data, labels)
     silhouette_scores.append(score)
 
-plt.plot(range(2, 10), silhouette_scores, marker='o')
-plt.title('Silhouette Score Method')
-plt.xlabel('Number of clusters')
-plt.ylabel('Silhouette Score')
-plt.show()
-
-inertias = []
-
+# Elbow (mulai dari 1)
 for i in range(1, 10):
-    kmeans = KMeans(n_clusters=i)
+    kmeans = KMeans(n_clusters=i, n_init=10, random_state=42)
     kmeans.fit(data)
     inertias.append(kmeans.inertia_)
 
-plt.plot(range(1,10), inertias, marker='o') 
-plt.title('Elbow method') 
-plt.xlabel('Number of clusters') 
-plt.ylabel('Inertia') 
+# --- Plot ---
+fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+
+# Silhouette
+axs[0].plot(range(2, 10), silhouette_scores, marker='o')
+axs[0].set_title('Silhouette Score Method')
+axs[0].set_xlabel('Number of clusters')
+axs[0].set_ylabel('Silhouette Score')
+
+# Elbow
+axs[1].plot(range(1, 10), inertias, marker='o')
+axs[1].set_title('Elbow Method')
+axs[1].set_xlabel('Number of clusters')
+axs[1].set_ylabel('Inertia')
+
+plt.tight_layout()
 plt.show()
 
 # Ambil 3 kolom
